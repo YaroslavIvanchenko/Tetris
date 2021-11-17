@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Tetris
 {
@@ -6,28 +7,35 @@ namespace Tetris
     {
         static void Main(string[] args)
         {
+#pragma warning disable CA1416 // Validate platform compatibility
             Console.SetWindowSize(40, 30);
             Console.SetBufferSize(40, 30);
-
-            //var s = new Square(2, 5, '*');
-            //s.Draw();
+#pragma warning restore CA1416 // Validate platform compatibility
 
 
-            //var stick = new Stick(2, 5, '*');
-            //stick.Draw();
+            var generator = new FigureGenerator(20, 0, '*');
+            Figure s = null;
 
-            //Point p1 = new Point(2, 3, '*');
-
-            //p1.Draw();
-
-            Figure[] figures = new Figure[2];
-            figures[0] = new Square(2, 5, '*');
-            figures[1] = new Stick(6, 6, '*');
-
-            foreach(var figure in figures)
+            while(true)
             {
-                figure.Draw();
+                FigureFall(s, generator);
             }
+           
+        }
+
+        static void FigureFall(Figure figure, FigureGenerator figureGenerator)
+        {
+            figure = figureGenerator.GetNewFigure();
+            figure.Draw();
+
+            for(int i = 0; i < 10; i++)
+            {
+                figure.Hide();
+                figure.Move(Direction.DOWN);
+                figure.Draw();
+                Thread.Sleep(200);
+            }
+
         }
     }
 }
